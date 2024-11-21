@@ -7,6 +7,11 @@
 </head>
 <body>
   <canvas id="webgpu-canvas"></canvas>
+  <div id="ui-overlay">
+    <select id="example-selector">
+      <option value="random_triangles_1">Random Triangles 1</option>
+    </select>
+  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 <style>
@@ -19,5 +24,16 @@
     width: 100vw; /* 100% of viewport width */
     height: 100vh; /* 100% of viewport height */
   }
+  #ui-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+}
+
+#example-selector {
+  padding: 5px;
+  font-size: 16px;
+}
 </style>
 </html>
