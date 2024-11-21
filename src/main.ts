@@ -31,28 +31,28 @@ function resizeCanvas(canvas: HTMLCanvasElement) {
     currentKey = exampleKey;
   });
 
-  // Load the example based on the URL parameter
+  let cleanupFn: (() => void) | null = null;
+
   async function loadExample(exampleKey: string) {
-    if (!examples[exampleKey]) {
+    if (cleanupFn) {
+      cleanupFn(); // Cleanup previous example
+    }
+
+    const example = examples[exampleKey];
+    if (!example) {
       console.error(`Example "${exampleKey}" not found.`);
       return;
     }
-
-    // Clear the canvas and stop previous example if needed
-    canvas.width = canvas.width; // Resets the canvas
-    const example = examples[exampleKey];
-
-    // Initialize the example
-    await example(device, context, format);
+    console.log("starting example", exampleKey);
+    cleanupFn = await example(device, context, format);
   }
 
   // Get the initial example from the URL and load it
-  const initialExample = getExampleFromURL() || "random_triangles_1";
-  loadExample(initialExample);
+  currentKey = getExampleFromURL() || "random_triangles_1";
 
   // Configure initially
   resizeCanvasAndConfigure();
 
   // Reconfigure on resize
-  window.addEventListener("resize", resizeCanvasAndConfigure);
+  // window.addEventListener("resize", resizeCanvasAndConfigure);
 })();

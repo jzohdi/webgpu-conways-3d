@@ -2,6 +2,10 @@
 
 Just for fun. This is an experpimental project for the purpose of learning webgpu APIs.
 
+## TODO
+
+1. Make the drop down list logic wayyy better.
+
 ## Setup steps taken
 
 `npm create vite@latest`

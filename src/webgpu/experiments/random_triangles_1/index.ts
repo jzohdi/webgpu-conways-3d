@@ -5,7 +5,7 @@ export async function main(
   device: GPUDevice,
   context: GPUCanvasContext,
   format: GPUTextureFormat
-) {
+): Promise<() => void> {
   const instanceCount = 1000;
   const unitSquareVertexBuffer = getInstaneBuffer(instanceCount, device);
   const instanceBuffer = getInstaneBuffer(instanceCount, device);
@@ -32,4 +32,6 @@ export async function main(
   passEncoder.end();
 
   device.queue.submit([commandEncoder.finish()]);
+
+  return () => {};
 }
