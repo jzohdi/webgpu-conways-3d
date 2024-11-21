@@ -4,21 +4,19 @@ export async function createPipeline(
 ) {
   const shaderModule = device.createShaderModule({
     code: `
-    @vertex
-    fn main_vertex(@builtin(vertex_index) VertexIndex : u32)
-      -> @builtin(position) vec4<f32> {
-        var pos = array<vec2<f32>, 3>(
-          vec2<f32>(0.0, 0.5),
-          vec2<f32>(-0.5, -0.5),
-          vec2<f32>(0.5, -0.5)
-        );
-        return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
-      }
+			@vertex
+			fn main_vertex(
+				@location(0) position: vec2<f32>,       // Unit square vertex positions
+				@location(1) instancePosSize: vec4<f32> // Per-instance [x, y, width, height]
+			) -> @builtin(position) vec4<f32> {
+				let pos = position * instancePosSize.zw + instancePosSize.xy; // Scale and translate
+				return vec4<f32>(pos, 0.0, 1.0);
+			}
 
-    @fragment
-    fn main_fragment() -> @location(0) vec4<f32> {
-      return vec4<f32>(1.0, 0.0, 0.0, 1.0);
-    }
+			@fragment
+			fn main_fragment() -> @location(0) vec4<f32> {
+				return vec4<f32>(0.0, 1.0, 0.0, 1.0); // Green color
+			}
     `,
   });
 
@@ -27,6 +25,21 @@ export async function createPipeline(
     vertex: {
       module: shaderModule,
       entryPoint: "main_vertex",
+      buffers: [
+        {
+          arrayStride: 2 * 4, // Each vertex has 2 floats (x, y)
+          attributes: [
+            { shaderLocation: 0, offset: 0, format: "float32x2" }, // Vertex positions
+          ],
+        },
+        {
+          arrayStride: 4 * 4, // Each instance has 4 floats (x, y, width, height)
+          stepMode: "instance", // Step per instance
+          attributes: [
+            { shaderLocation: 1, offset: 0, format: "float32x4" }, // Instance data
+          ],
+        },
+      ],
     },
     fragment: {
       module: shaderModule,
