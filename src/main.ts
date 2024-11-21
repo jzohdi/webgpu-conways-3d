@@ -13,6 +13,8 @@ function resizeCanvas(canvas: HTMLCanvasElement) {
   const canvas = document.getElementById("webgpu-canvas") as HTMLCanvasElement;
   const { device, context, format } = await initWebGPU(canvas);
 
+  let currentKey = "random_triangles_1";
+
   function resizeCanvasAndConfigure() {
     resizeCanvas(canvas);
     context.configure({
@@ -20,11 +22,13 @@ function resizeCanvas(canvas: HTMLCanvasElement) {
       format: navigator.gpu.getPreferredCanvasFormat(),
       alphaMode: "premultiplied",
     });
+    loadExample(currentKey);
   }
 
   setupDropdown((exampleKey) => {
     setExampleInURL(exampleKey); // Update URL params
     loadExample(exampleKey); // Load selected example
+    currentKey = exampleKey;
   });
 
   // Load the example based on the URL parameter
