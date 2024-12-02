@@ -1,8 +1,10 @@
-export async function main(
+import { MainFunction } from "..";
+
+export const main: MainFunction = async (
   device: GPUDevice,
   context: GPUCanvasContext,
   format: GPUTextureFormat
-): Promise<() => void> {
+) => {
   const SQUARE_SIZE_PIXELS = 20; // Each square is 20x20 pixels
   let instanceCount: number;
   let GRID_ROWS: number;

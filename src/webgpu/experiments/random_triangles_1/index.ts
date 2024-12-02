@@ -1,11 +1,12 @@
+import { MainFunction } from "..";
 import { getInstaneBuffer } from "./squares";
 import { createPipeline } from "./squares/pipeline";
 
-export async function main(
+export const main: MainFunction = async (
   device: GPUDevice,
   context: GPUCanvasContext,
   format: GPUTextureFormat
-): Promise<() => void> {
+) => {
   const instanceCount = 1000;
   const unitSquareVertexBuffer = getInstaneBuffer(instanceCount, device);
   const instanceBuffer = getInstaneBuffer(instanceCount, device);

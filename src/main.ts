@@ -1,7 +1,7 @@
 import { initWebGPU } from "./webgpu/initWebGPU";
 import { setupDropdown } from "./ui/dropdown";
 import { getExampleFromURL, setExampleInURL } from "./router";
-import { examples } from "./webgpu/experiments";
+import { examples, ExampleKeys } from "./webgpu/experiments";
 
 function resizeCanvas(canvas: HTMLCanvasElement) {
   const devicePixelRatio = window.devicePixelRatio || 1;
@@ -9,12 +9,16 @@ function resizeCanvas(canvas: HTMLCanvasElement) {
   canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
 }
 
+
 (async () => {
   const canvas = document.getElementById("webgpu-canvas") as HTMLCanvasElement;
   const { device, context, format } = await initWebGPU(canvas);
 
-  let currentKey = "random_triangles_1";
-
+  let currentKey= setupDropdown(examples, (exampleKey) => {
+    setExampleInURL(exampleKey); // Update URL params
+    loadExample(exampleKey); // Load selected example
+    currentKey = exampleKey;
+  });
   function resizeCanvasAndConfigure() {
     resizeCanvas(canvas);
     context.configure({
@@ -25,15 +29,9 @@ function resizeCanvas(canvas: HTMLCanvasElement) {
     loadExample(currentKey);
   }
 
-  setupDropdown((exampleKey) => {
-    setExampleInURL(exampleKey); // Update URL params
-    loadExample(exampleKey); // Load selected example
-    currentKey = exampleKey;
-  });
-
   let cleanupFn: (() => void) | null = null;
 
-  async function loadExample(exampleKey: string) {
+  async function loadExample(exampleKey: ExampleKeys) {
     if (cleanupFn) {
       cleanupFn(); // Cleanup previous example
     }
@@ -44,7 +42,7 @@ function resizeCanvas(canvas: HTMLCanvasElement) {
       return;
     }
     console.log("starting example", exampleKey);
-    cleanupFn = await example(device, context, format);
+    cleanupFn = await example.main(device, context, format);
   }
 
   // Get the initial example from the URL and load it
